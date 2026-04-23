@@ -2,14 +2,14 @@
 
 ## 📋 Scenario Overview
 
-This example demonstrates how to build an intelligent travel planning agent using the Microsoft Agent Framework for .NET. The agent can automatically generate personalized day-trip itineraries for random destinations around the world.
+This example demonstrates (chứng tỏ) how to build an intelligent travel planning agent using the Microsoft Agent Framework for .NET. The agent can automatically generate personalized day-trip itineraries (hành trình) for random destinations around the world.
 
 ### Key Capabilities:
 
 - 🎲 **Random Destination Selection**: Uses a custom tool to pick vacation spots
 - 🗺️ **Intelligent Trip Planning**: Creates detailed day-by-day itineraries
-- 🔄 **Real-time Streaming**: Supports both immediate and streaming responses
-- 🛠️ **Custom Tool Integration**: Demonstrates how to extend agent capabilities
+- 🔄 **Real-time Streaming**: Supports both immediate (tức thời) and streaming responses
+- 🛠️ **Custom Tool Integration**: Demonstrates (Trình bày) how to extend agent capabilities
 
 ## 🔧 Technical Architecture
 
@@ -17,7 +17,7 @@ This example demonstrates how to build an intelligent travel planning agent usin
 
 - **Microsoft Agent Framework**: Latest .NET implementation for AI agent development
 - **GitHub Models Integration**: Uses GitHub's AI model inference service
-- **OpenAI API Compatibility**: Leverages OpenAI client libraries with custom endpoints
+- **OpenAI API Compatibility**: Leverages (Tận dụng) OpenAI client libraries with custom endpoints
 - **Secure Configuration**: Environment-based API key management
 
 ### Key Components
