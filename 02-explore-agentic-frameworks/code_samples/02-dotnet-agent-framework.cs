@@ -93,7 +93,7 @@ Always prioritize user preferences. If they mention a specific destination like 
 AIAgent agent = openAIClient
     .GetChatClient(github_model_id)
     .AsIChatClient()
-    .CreateAIAgent(
+    .AsAIAgent(
         name: AGENT_NAME,
         instructions: AGENT_INSTRUCTIONS,
         tools: [AIFunctionFactory.Create(GetRandomDestination)]
