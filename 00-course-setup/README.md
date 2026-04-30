@@ -227,6 +227,8 @@ pip install -r requirements.txt
 
 We recommend running this inside the virtual environment you created earlier.
 
+## I'm done until this:>
+
 ## Additional Setup for Lesson 5 (Agentic RAG)
 
 Lesson 5 uses **Azure AI Search** for retrieval-augmented generation. If you plan to run that lesson, add these variables to your `.env` file:
