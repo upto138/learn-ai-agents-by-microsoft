@@ -124,6 +124,21 @@ Ready to see it in action? Here are the code samples for this lesson:
 - 🐍 Python: [Agent Framework](./code_samples/01-python-agent-framework.ipynb)
 - 🔷 .NET: [Agent Framework](./code_samples/01-dotnet-agent-framework.md)
 
+## What You Accomplish In Lesson 1
+
+By completing the Python notebook in this lesson, you achieve a full end-to-end first agent workflow:
+
+- Install and validate the core Microsoft Agent Framework dependencies.
+- Authenticate to Azure AI Foundry using `AzureCliCredential` (`az login`).
+- Create a `FoundryChatClient` with your project endpoint and model deployment.
+- Define and register a real tool with `@tool` (`get_destinations`).
+- Wrap the client as an agent and run prompts with `await agent.run(...)`.
+- Ask follow-up questions and reuse the same agent context.
+- Handle real-world model compatibility issues with a fallback path:
+  - If the model does not support tool-calling parameters, the notebook automatically switches to no-tool mode so the lesson remains runnable.
+
+After this lesson, you have a working baseline you can extend in later lessons with planning, memory, RAG, and multi-agent orchestration.
+
 ---
 
 ## Got Questions?
