@@ -17,8 +17,8 @@
 
 ### **Recommended Workflow**
 
-1. **Step 1: Setup (`azure-ai-foundry-agent-creation.md`)** – Create the Agent resource in Azure AI Foundry and verify your credentials.
-2. **Step 2: Practical Lab (`02-python-agent-framework.ipynb`)** – Run the code to build the "Travel Booking Agent" (the lesson's example) to see the concepts in action.
+1. **Step 1: Setup (`azure-ai-foundry-agent-creation.md`)** – Create the Agent resource in Azure AI Foundry and verify your credentials. [Link here](https://github.com/upto138/learn-ai-agents-by-microsoft/blob/nphoang/02-explore-agentic-frameworks/azure-ai-foundry-agent-creation.md)
+2. **Step 2: Practical Lab (`02-python-agent-framework.ipynb`)** – Run the code to build the "Travel Booking Agent" (the lesson's example) to see the concepts in action. [Link here](https://github.com/upto138/learn-ai-agents-by-microsoft/blob/nphoang/02-explore-agentic-frameworks/code_samples/02-python-agent-framework.ipynb?short_path=c74060d)
 3. **Step 3: Project Alignment** – Apply the **Client/Agent/Tool/Session** pattern to your **Researcher Agent** for the Student Admission system.
 
 **Next Step for our conversation:** Once you've reviewed the creation guide, would you like to walk through how to adapt the **AgentSession** concept from the notebook to maintain the "memory" of a student's university preferences?
