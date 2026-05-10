@@ -1,7 +1,7 @@
 # Introduction
 - This is the tracking file for course 02-explore-agentic-frameworks
 
-# Done
+# Done - 10/05/2026
 - Reading theory about 02 course - explore agentic frameworks (README.md)
 - Can answer below questions
     1. What are AI Agent Frameworks and what do they enable developers to achieve?
@@ -16,7 +16,7 @@
 - Should **read and understand the content of "azure-ai-foundry-agent-creation.md" first**.
 
 ### **Recommended Workflow**
-
+0. Link Gemini to learn and study: [Here](https://gemini.google.com/gem/27e6134c9708/e68c7134f6c04ad6)
 1. **Step 1: Setup (`azure-ai-foundry-agent-creation.md`)** – Create the Agent resource in Azure AI Foundry and verify your credentials. [Link here](https://github.com/upto138/learn-ai-agents-by-microsoft/blob/nphoang/02-explore-agentic-frameworks/azure-ai-foundry-agent-creation.md)
 2. **Step 2: Practical Lab (`02-python-agent-framework.ipynb`)** – Run the code to build the "Travel Booking Agent" (the lesson's example) to see the concepts in action. [Link here](https://github.com/upto138/learn-ai-agents-by-microsoft/blob/nphoang/02-explore-agentic-frameworks/code_samples/02-python-agent-framework.ipynb?short_path=c74060d)
 3. **Step 3: Project Alignment** – Apply the **Client/Agent/Tool/Session** pattern to your **Researcher Agent** for the Student Admission system.
