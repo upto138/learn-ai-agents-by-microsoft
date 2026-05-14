@@ -40,86 +40,79 @@
 ---
 
 
-# (14/05 - ) New plan for Building the Planner Agent base on the current progress
+# (14/05 - ) New plan for Building the Advisor Agent base on the current progress
 
-As the **MAS Architect**, I have outlined your sequential roadmap to integrate the **Planner Agent** into the **Student Admission Agents** pipeline. This plan prioritizes infrastructure stability first, followed by interface synchronization with your teammates, and finally local code implementation.
-
----
+Kế hoạch này được thiết kế để tích hợp **Advisor Agent** vào pipeline, tập trung vào khả năng giải thích kế hoạch (Explanation) và hướng dẫn sinh viên (Guidance).
 
 ### **Phase 1: Infrastructure & Environment (The Foundation)**
 
-1. **Finalize Azure AI Foundry Hub and Project**: Ensure your Hub and Project are created in the Azure Portal to provide the central management workspace for all agents.
-2. **Model Deployment**: Deploy the `gpt-4o-mini` model within your project, as it supports the native tool-calling capabilities required for a functional agentic loop.
-3. **Update `.env` Configuration**: Securely store your `AZURE_AI_PROJECT_ENDPOINT` and `AZURE_AI_MODEL_DEPLOYMENT_NAME` (without quotes or inline comments) to prevent the `UnsupportedProtocol` connection errors encountered previously.
+1. **Verify Hub and Project**: Đảm bảo dự án `Student-Admission-Agents` đã sẵn sàng trên Azure AI Foundry Portal.
+2. **Model Deployment**: Tiếp tục sử dụng `gpt-4o-mini` để hỗ trợ khả năng suy luận ngôn ngữ tự nhiên và tương tác thân thiện.
+3. **Environment Check**: Đảm bảo các biến `.env` đã được cấu hình chính xác để tránh lỗi kết nối khi Agent thực hiện truy vấn ngữ cảnh.
 
 
+## Next Plan:  
+- Học Agentic Design Pattern, sau đó hỏi Hòa về một số câu hỏi cần thiết dựa vào file "Questions-for-Planner-teammate.md"  
+- Tiếp tục Phase 2.
 
 ### **Phase 2: Pipeline Interface Synchronization (Teammate Coordination)**
 
-4. **Sync with the Researcher Agent Lead**:
-* **Input Requirements**: Confirm that the Researcher will output **Structured Data** (JSON) containing university requirements, deadlines, and target scores.
-* **Data Schema**: Agree on the exact keys the Researcher will provide so the Planner doesn't have to "guess" where information is located.
+4. **Sync with the Planner Agent Lead**:
+* **Input Requirements**: Advisor cần nhận được **Admission Plan/Checklist** (JSON) từ Planner.
 
 
-5. **Sync with the Advisor Agent Lead**:
-* **Output Requirements**: Define the format of the "Admission Plan" or "Checklist" the Planner will generate.
-* **Context Passing**: Ensure the Advisor understands how to read the Planner’s checklist to explain it to the student in natural language.
+* **Reasoning Capture**: Thống nhất với Planner để truyền tải cả "lý do" tại sao chọn trường đó, giúp Advisor giải thích thuyết phục hơn.
 
 
-6. **Architectural Alignment**: Confirm with the **Orchestrator** lead that the Planner will be triggered sequentially after the Researcher finishes its task, following the **Information → Planning → Explanation** flow.
+
+
+5. **Sync with the Application Agent Lead**:
+* **Confirmation Hand-off**: Định nghĩa cách Advisor thông báo cho Application Agent khi sinh viên đã sẵn sàng nộp hồ sơ (Human-in-the-Loop).
+
+
+
+
+6. **Architectural Alignment**: Xác định vị trí của Advisor là chốt chặn cuối cùng trước khi thực thi, chuyển đổi từ ngôn ngữ máy (JSON) sang ngôn ngữ người (Chat).
+
+
+
 #### **Applying Agentic design patterns in phase 2**
-Pattern: Workflow Graph / Orchestration: Instead of a loose "chat" between agents, use this phase to define the Graph-Based Routing.  
 
-Application: Determine if the flow is Sequential (Researcher → Planner → Advisor) or if it requires Conditional Edges (e.g., if the Researcher finds no data, loop back to the user instead of going to the Planner).  
+* **Pattern: Shared State**: Sử dụng `IWorkflowContext` để Advisor đọc được toàn bộ lịch sử từ Researcher và Planner, đảm bảo không hỏi lại những gì sinh viên đã cung cấp.
+* **Pattern: Conditional Edges**: Nếu sinh viên không đồng ý với kế hoạch của Planner, Advisor phải có logic quay lại bước Planning để điều chỉnh.
 
-Pattern: Shared State: Define the "Single Source of Truth."  
+### **Phase 3: Portal-Side Persona Configuration**  (Đã xong nhưng cần xem làm gì với Agentic patterns)
 
-Application: Decide what data persists in the IWorkflowContext so that every agent in the pipeline is looking at the same student profile.  
-
-### **Phase 3: Portal-Side Persona Configuration** (Done in 14/05 - 18:00)
-
-7. **Create the Planner Agent in the Portal**: Navigate to the **Agents** section in AI Foundry and create a new agent named `AdmissionPlannerAgent`.
-8. **Define System Instructions**: Draft the persona instructions focusing on logical analysis and checklist generation:
-* **Role**: Specialized Admission Strategist.
-* **Input**: Student profile + Research data.
-* **Output**: Structured registration plan.
+7. **Create the Advisor Agent**: Tạo agent mới với tên `AdmissionAdvisorAgent` trên portal.
+8. **Define System Instructions**: Thiết lập Persona là một chuyên gia tư vấn giáo dục tận tâm:
+* **Role**: Educational Advisor & Mentor.
+* **Task**: Giải thích checklist, trả lời thắc mắc và hướng dẫn chuẩn bị hồ sơ (IELTS, học bạ).
+* **Tone**: Thân thiện, hỗ trợ và chuyên nghiệp.
 
 
-9. **Playground Validation**: Test the agent in the portal playground by manually pasting sample data from the "Researcher" role to verify it generates a logical checklist.
+9. **Playground Validation**: Giả lập dữ liệu từ Planner để kiểm tra khả năng biến một JSON phức tạp thành một lời khuyên dễ hiểu.
+
 #### **Applying Agentic design patterns in phase 3**
 
-**Pattern: ReAct (Reasoning + Acting)**: This must be embedded in the System Instructions you write in the portal.  
-- Application: For your Planner Agent, instruct it specifically to follow a "Thought -> Action -> Observation" loop. This ensures it doesn't just guess a plan but "thinks" about the requirements first.  
+* **Pattern: ReAct (Reasoning + Acting)**: Yêu cầu Advisor luôn suy nghĩ về mục tiêu của sinh viên trước khi đưa ra lời khuyên, tránh việc chỉ lặp lại checklist một cách máy móc.
 
-**Pattern**: Tool-Use: Even if you haven't coded the tools yet, you must define the Tool Metadata in the portal now.  
-- Application: Define the description of the tools your agents will eventually use so the LLM knows they exist. 
 ### **Phase 4: SDK Integration & Local Development**
 
-10. **Initialize FoundryChatClient**: Use the `agent-framework-foundry` SDK to connect your local Python environment to the portal-side agent you just created.
+10. **Initialize FoundryChatClient**: Kết nối code Python với `AdmissionAdvisorAgent` thông qua SDK.
 
 
-11. **Implement the Agent Wrapper**: Use `chat_client.as_agent()` to bring the `AdmissionPlannerAgent` into your backend logic.
+11. **Implement Agent Session**: Đây là bước quan trọng nhất cho Advisor. Phải tích hợp quản lý **Memory** (Lesson 13) để Agent nhớ được các câu hỏi trước đó của sinh viên trong cùng một phiên tư vấn.
+12. **Wrapper Development**: Hoàn thiện hàm `agent.run()` để Advisor có thể tương tác trực tiếp với Frontend của sinh viên.
 
 
-12. **Define Agent State**: Implement the shared state object (`state.py`) that will hold the student's admission data as it passes from the Researcher to your Planner.
 
 ### **Phase 5: Iteration & Pattern Upgrades (Future Lessons)**
 
-13. **Refine with Design Patterns**: Once you reach **Lesson 07 (Planning Design Pattern)**, update the agent's instructions to use advanced reasoning techniques for more complex university selection logic.
-
-
-14. **Add Function Tools**: Once you reach **Lesson 04 (Tool Use)**, give the Planner tools to query the **PostgreSQL** database to save the generated plans for the student's future sessions.
-
-
-#### **Applying Agentic design patterns in phase 5**
-**Pattern**: Human-in-the-Loop (HITL): This is the most complex pattern to implement.  
-- Application: Apply this specifically to the Application Agent. Use the ApprovalRequiredAIFunction pattern to ensure the agent pauses for a human "OK" before submitting any real university forms.  
-**Pattern**: CodeAct / Code Interpreter: If your Planner needs to perform complex score calculations.  
-- Application: Enable sandboxed code execution so the agent can write Python to calculate GPA conversions accurately rather than relying on LLM arithmetic
+13. **Context Engineering (Lesson 12)**: Tinh chỉnh cách Advisor tiếp nhận thông tin từ Researcher để đưa ra các lời khuyên thực tế về đời sống/văn hóa tại trường đại học mục tiêu.
+14. **Human-in-the-Loop (HITL)**: Tích hợp nút xác nhận (Confirmation UI) trong luồng chat của Advisor. Khi sinh viên nói "I agree", Advisor sẽ kích hoạt Application Agent thực hiện nộp hồ sơ.
 
 ---
 
-**Critical Architect’s Note**: By syncing with your teammates in **Step 4 and 5**, you prevent the most common failure in Multi-Agent Systems: **Interface Mismatch**. If the Researcher sends a raw PDF text but the Planner expects a clean JSON list, the entire pipeline will break.
+**Critical Architect’s Note**: Advisor là Agent duy nhất tương tác trực tiếp với cảm xúc của người dùng. Nếu Advisor không hiểu đúng kế hoạch từ Planner, sinh viên sẽ mất niềm tin vào toàn bộ hệ thống MAS. Hãy ưu tiên việc thử nghiệm các kịch bản "sinh viên thắc mắc" trong Playground trước khi tích hợp vào code.
 
-**One relevant follow-up question:**
-Since you are ready to coordinate with your teammates, would you like me to provide a **sample JSON schema** that the Researcher could use to pass data to your Planner Agent?
+---
