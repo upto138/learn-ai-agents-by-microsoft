@@ -54,6 +54,10 @@ Kế hoạch này được thiết kế để tích hợp **Advisor Agent** vào
 ## Next Plan:  
 - Học Agentic Design Pattern, sau đó hỏi Hòa về một số câu hỏi cần thiết dựa vào file "Questions-for-Planner-teammate.md"  
 - Tiếp tục Phase 2.
+- Học thêm lesson 13: Managing Agentic Memory, 12: Context Engineering for AI Agents, 5: Agentic RAG (Retrieval-Augmented Generation)  
+- Thứ tự: Lesson 13: Memory, Lesson 12: Context, Lesson 05: RAG
+- Kỹ năng cần đạt được: Duy trì ngữ cảnh hội thoại dài hạn với sinh viên, Biến dữ liệu JSON của Planner thành lời khuyên có cấu trúc và dễ hiểu, Khả năng tự kiểm tra lại dữ liệu nguồn để giải thích lý do (Reasoning).
+
 
 ### **Phase 2: Pipeline Interface Synchronization (Teammate Coordination)**
 
