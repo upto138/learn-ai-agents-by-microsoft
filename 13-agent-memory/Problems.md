@@ -290,3 +290,37 @@ Kết quả tương tự — Agent trả về danh sách "British Airways, easyJ
 | **13** | `13-agent-memory.ipynb` | `save_preference`, `get_preferences` | ❌ Không | Tuyên bố "đã lưu" nhưng dictionary luôn rỗng |
 
 > **Kết luận:** Tất cả các lesson sử dụng `FoundryAgent` + `agent_name` kèm local Python tools đều bị ảnh hưởng bởi cùng một vấn đề kiến trúc. Giải pháp là chuyển sang dùng `provider.create_agent()` hoặc `Agent` + `FoundryChatClient` (xem [Phần 3](#3-cách-khắc-phục)).
+
+## 6. Cơ chế hoạt động của `FoundryChatClient` và Local Agent
+
+Để hiểu rõ hơn đoạn giải thích: *"FoundryChatClient KHÔNG dùng agent_reference — nó gọi trực tiếp Chat Completion API kèm tool schemas. Khi LLM trả về tool_call, FunctionInvocationLayer trong FoundryChatClient sẽ tự động gọi hàm Python local tương ứng..."*, chúng ta cần xem xét luồng hoạt động chi tiết (đoạn giải thích ở dòng `**Tại sao cách này hoạt động?**`).
+
+### 6.1. Chi tiết cơ chế Local Tool Calling
+
+Khi bạn khởi tạo một `Agent` thông thường và truyền `FoundryChatClient` vào làm `client`:
+
+1. **Gửi Request:** `FoundryChatClient` đóng gói lịch sử tin nhắn (messages) và **toàn bộ định nghĩa (schemas) của các tools Python** (tên hàm, tham số, mô tả) vào một HTTP request chuẩn của OpenAI Chat Completions API. Nó **không** nhúng `agent_reference`.
+2. **LLM Quyết định:** Model trên đám mây đọc prompt và nhận thấy cần gọi tool. Nó trả về một response đặc biệt có chứa `tool_calls` (yêu cầu gọi hàm, ví dụ: "hãy chạy hàm `save_preference` với tham số `user_id='sarah', preference='vegetarian'`).
+3. **Thực thi tại Local (FunctionInvocationLayer):** Framework ở dưới máy tính của bạn nhận được response này. Thành phần `FunctionInvocationLayer` (được tích hợp bên trong Client) nhận ra LLM đang yêu cầu gọi tool. Nó tự động tìm hàm `save_preference` trong bộ nhớ RAM của máy tính bạn (chính là Jupyter notebook), truyền tham số vào và **thực thi hàm đó**.
+4. **Trả kết quả lại:** Hàm chạy xong, trả về kết quả (ví dụ: "Đã lưu"). `FunctionInvocationLayer` lấy kết quả đó đóng gói thành một message mới dạng `tool_message` và gửi ngược lên cho LLM.
+5. **LLM Phản hồi:** LLM nhận được kết quả của hàm và dựa vào đó sinh ra câu trả lời cuối cùng bằng ngôn ngữ tự nhiên cho người dùng.
+
+Trái ngược với điều này, `FoundryAgent` gửi `agent_reference` lên server, đẩy toàn bộ trách nhiệm gọi tool cho server. Nhưng server lại không có mã nguồn các hàm Python của bạn, nên quy trình trên bị gãy khúc.
+
+### 6.2. Agent tạo ra có dùng Model trong file `.env` không?
+
+**Câu trả lời là CÓ.** 
+
+Khi bạn sử dụng đoạn code ở Phần 3 Cách 2:
+```python
+foundry_client = FoundryChatClient(
+    credential=AzureCliCredential(),
+    project_endpoint=os.getenv("FOUNDRY_PROJECT_ENDPOINT"),
+    model=os.getenv("FOUNDRY_MODEL"),
+)
+```
+
+1. **Về Endpoint & Model:** `FoundryChatClient` hoàn toàn lấy giá trị `FOUNDRY_PROJECT_ENDPOINT` (`https://23120242-2770...`) và `FOUNDRY_MODEL` (`gpt-4o-mini`) từ file `.env` của bạn để tạo ra kết nối (connection) đến đúng dự án Azure AI Foundry và đúng Model Deployment mà bạn đã cấp phép.
+2. **Về Agent Name:** Nó **KHÔNG** sử dụng `FOUNDRY_AGENT_NAME="TravelAvailabilityAgent"`. Khác với `FoundryAgent` (tự động móc nối đến agent có sẵn trên portal thông qua tên), `Agent` kết hợp với `FoundryChatClient` sẽ tự tạo ra một Agent **hoàn toàn mới, nằm cục bộ (local) trên bộ nhớ của bạn**. Bạn có quyền đặt tên tuỳ ý cho Agent local này trong code (ví dụ `name="TravelBookingAssistant"`).
+
+**Tóm lại:** Agent dùng cấu trúc này vẫn tiêu thụ tài nguyên AI (Model `gpt-4o-mini`) từ tài khoản Azure Foundry của bạn (trả phí trên cloud), nhưng bộ não điều phối (hướng dẫn, quản lý bộ nhớ, thực thi tool) lại nằm hoàn toàn dưới quyền kiểm soát cục bộ của Jupyter notebook trên máy bạn. Đây là sự kết hợp hoàn hảo để vừa có AI mạnh, vừa chạy được các tool Python tuỳ chỉnh.
